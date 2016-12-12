@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+ 	xmlns:h="http://xmlns.jcp.org/jsf/html"
+ 	xmlns:f="http://xmlns.jcp.org/jsf/core"
+ 	xmlns:p="http://primefaces.org/ui">
+<h:head>
+
+<meta charset="UTF-8"/>
+<title>Gestão Empresas</title>
+
+<h:outputStylesheet library="algaworks" name="estilo.css" />
+
+<f:metadata>
+	<f:viewAction action="#{gestaoEmpresasBean.todasEmpresas}" />
+</f:metadata>
+
+</h:head>
+
+<h:body>
+	<header>
+		<h:graphicImage library="algaworks" name="logo.png" />
+	</header>
+	
+	<h2>Cadastro de Empresas</h2>
+
+	<div id="conteudo">
+	
+		<p:dataTable value="#{gestaoEmpresasBean.listaEmpresas}"
+			var="empresa" emptyMessage="Nenhuma informação a ser exibida"
+			paginator="true" rows="10" paginatorPosition="bottom">
+			<p:column headerText="Razão social">
+				<h:outputText value="#{empresa.razaoSocial}" />
+			</p:column>
+			
+			<p:column headerText="Nome fantasia">
+				<h:outputText value="#{empresa.nomeFantasia}" />
+			</p:column>
+			
+			<p:column headerText="Tipo empresa">
+				<h:outputText value="#{empresa.tipo}" />
+			</p:column>
+			
+			<p:column headerText="Ramo atividade">
+				<h:outputText value="#{empresa.ramoAtividade.descricao}" />
+			</p:column>
+		</p:dataTable>
+			
+	</div>
+	
+	<footer>
+		Curso online "JSF e PrimeFaces Essencial"
+	</footer>
+</h:body>
+
+</html>

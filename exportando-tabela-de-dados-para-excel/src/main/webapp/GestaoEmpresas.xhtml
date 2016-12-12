@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+ 	xmlns:h="http://xmlns.jcp.org/jsf/html"
+ 	xmlns:f="http://xmlns.jcp.org/jsf/core"
+ 	xmlns:p="http://primefaces.org/ui"
+ 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+ 	template="WEB-INF/template/Layout.xhtml">
+ 	
+<ui:define name="titulo">
+	Cadastro de Empresas
+</ui:define>
+
+<ui:define name="conteudo">
+	<f:metadata>
+		<f:viewAction action="#{gestaoEmpresasBean.todasEmpresas}" />
+	</f:metadata>
+	
+	<h:form id="frm">
+		<p:messages id="messages" />
+	
+		<p:toolbar id="toolbar">
+			<f:facet name="left">
+				<p:inputText id="termoPesquisa" placeholder="Digite aqui um termo para pesquisa..." 
+					size="30" value="#{gestaoEmpresasBean.termoPesquisa}"/>
+				
+				<p:commandButton value="Pesquisar" icon="fa fa-search"
+					actionListener="#{gestaoEmpresasBean.pesquisar}" update="empresasDataTable messages"
+					process="@this termoPesquisa"/>
+				
+				<span class="ui-separator">
+	                <span class="ui-icon ui-icon-grip-dotted-vertical" />
+	            </span>
+	            
+	            <p:commandButton value="Nova" icon="fa fa-plus"
+	            	actionListener="#{gestaoEmpresasBean.prepararNovaEmpresa}" 
+	            	oncomplete="PF('empresaDialogWidgetVar').show()"
+	            	update="empresaDialog" process="@this">
+	            	<p:resetInput target="empresaDialog" />	
+            	</p:commandButton>
+	            
+				<span class="ui-separator">
+	                <span class="ui-icon ui-icon-grip-dotted-vertical" />
+	            </span>
+	            
+	            <p:commandButton title="Editar" icon="fa fa-edit" 
+	            	disabled="#{not gestaoEmpresasBean.empresaSeleciona}"
+	            	actionListener="#{gestaoEmpresasBean.prepararEdicao}"
+	            	oncomplete="PF('empresaDialogWidgetVar').show()"
+	            	update="empresaDialog" process="@this">
+	            	<p:resetInput target="empresaDialog" />	
+            	</p:commandButton>
+	            
+	            <p:commandButton title="Excluir" icon="fa fa-trash" 
+	            	disabled="#{not gestaoEmpresasBean.empresaSeleciona}"
+	            	actionListener="#{gestaoEmpresasBean.excluir}"
+	            	update="messages empresasDataTable toolbar"
+	            	process="@this">
+	            	<p:confirm icon="ui-icon-alert" header="Confirmação de exclusão" 
+	            		message="Posso excluir a empresa?" />	
+            	</p:commandButton>
+	            
+				<span class="ui-separator">
+	                <span class="ui-icon ui-icon-grip-dotted-vertical" />
+	            </span>
+	            
+	            <p:commandButton title="Exportar para o Excel" icon="fa fa-file-excel-o"
+	            	ajax="false">
+	            	<p:dataExporter type="xls" target="empresasDataTable" fileName="Empresas" />
+	            </p:commandButton>		
+			</f:facet>
+		</p:toolbar>
+		
+		<p:spacer height="20px" />
+		
+		<p:dataTable id="empresasDataTable" value="#{gestaoEmpresasBean.listaEmpresas}"
+			var="empresa" emptyMessage="Nenhuma informação a ser exibida"
+			paginator="true" rows="10" paginatorPosition="bottom"
+			selectionMode="single" selection="#{gestaoEmpresasBean.empresa}" rowKey="#{empresa.id}">
+			
+			<p:ajax event="rowSelect" update="frm:toolbar" />
+			
+			<p:ajax event="rowUnselect" update="frm:toolbar" />
+			
+			<p:column headerText="Razão social" sortBy="#{empresa.razaoSocial}">
+				<h:outputText value="#{empresa.razaoSocial}" />
+			</p:column>
+			
+			<p:column headerText="Nome fantasia">
+				<h:outputText value="#{empresa.nomeFantasia}" />
+			</p:column>
+			
+			<p:column headerText="Tipo empresa">
+				<h:outputText value="#{empresa.tipo}" />
+			</p:column>
+			
+			<p:column headerText="Ramo atividade">
+				<h:outputText value="#{empresa.ramoAtividade.descricao}" />
+			</p:column>
+		</p:dataTable>
+		
+		<p:dialog id="empresaDialog" header="Nova empresa" widgetVar="empresaDialogWidgetVar"
+			modal="true" resizable="false" closeOnEscape="true">
+			<p:messages id="empresaMessages" />
+			
+			<p:defaultCommand target="salvarCommandButton" scope="empresaDialog" />
+			
+			<h:panelGrid id="empresaPanelGrid" columns="2"
+				rendered="#{gestaoEmpresasBean.empresa ne null}">
+				<p:outputLabel value="Razão social: " for="razaoSocial" />
+				<p:inputText id="razaoSocial" size="80" maxlength="120" 
+					value="#{gestaoEmpresasBean.empresa.razaoSocial}" />
+				
+				<p:outputLabel value="Nome fantasia: " for="nomeFantasia" />
+				<p:inputText id="nomeFantasia" size="80" maxlength="80" 
+					value="#{gestaoEmpresasBean.empresa.nomeFantasia}"/>
+				
+				<p:outputLabel value="Tipo empresa: " for="tipo" />
+				<p:selectOneMenu id="tipo" value="#{gestaoEmpresasBean.empresa.tipo}">
+					<f:selectItem itemLabel="Selecione..." />
+					<f:selectItems value="#{gestaoEmpresasBean.tiposEmpresa}" 
+						var="tipoEmpresa" itemLabel="#{tipoEmpresa.descricao}"
+						itemValue="#{tipoEmpresa}"/>
+				</p:selectOneMenu>
+				
+				<p:outputLabel value="CNPJ: " for="cnpj" />
+				<p:inputMask id="cnpj" mask="99.999.999/9999-99" size="18" maxlength="18"
+					value="#{gestaoEmpresasBean.empresa.cnpj}"/>
+				
+				<p:outputLabel value="Data Fundação: " for="dataFundacao" />
+				<p:calendar id="dataFundacao" pattern="dd/MM/yyyy" size="30" 
+					value="#{gestaoEmpresasBean.empresa.dataFundacao}"/>
+				
+				<p:outputLabel value="Ramo atividade: " for="ramoAtividade" />
+				<p:autoComplete id="ramoAtividade" size="80" 
+					value="#{gestaoEmpresasBean.empresa.ramoAtividade}"
+					completeMethod="#{gestaoEmpresasBean.completarRamoAtividade}" 
+					converter="#{gestaoEmpresasBean.ramoAtividadeConverter}"
+					var="ramoAtividade"
+					itemLabel="#{ramoAtividade.descricao}" itemValue="#{ramoAtividade}"/>
+				
+				<h:outputLabel />
+				<p:commandButton id="salvarCommandButton" value="Salvar" actionListener="#{gestaoEmpresasBean.salvar}"
+					update="empresaPanelGrid empresaMessages"
+					oncomplete="if (!args.validationFailed) PF('empresaDialogWidgetVar').hide()" process="empresaDialog"/>
+			</h:panelGrid>
+		</p:dialog>
+	</h:form>
+</ui:define>
+
+</ui:composition>

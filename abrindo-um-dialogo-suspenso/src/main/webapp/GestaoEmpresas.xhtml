@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+ 	xmlns:h="http://xmlns.jcp.org/jsf/html"
+ 	xmlns:f="http://xmlns.jcp.org/jsf/core"
+ 	xmlns:p="http://primefaces.org/ui"
+ 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+ 	template="WEB-INF/template/Layout.xhtml">
+ 	
+<ui:define name="titulo">
+	Cadastro de Empresas
+</ui:define>
+
+<ui:define name="conteudo">
+	<f:metadata>
+		<f:viewAction action="#{gestaoEmpresasBean.todasEmpresas}" />
+	</f:metadata>
+	
+	<h:form>
+		<p:toolbar>
+			<f:facet name="left">
+				<p:inputText placeholder="Digite aqui um termo para pesquisa..." 
+					size="30"/>
+				
+				<p:commandButton value="Pesquisar" icon="fa fa fa-search"/>
+				
+				<span class="ui-separator">
+	                <span class="ui-icon ui-icon-grip-dotted-vertical" />
+	            </span>
+	            
+	            <p:commandButton value="Nova" icon="fa fa-plus" 
+	            	onclick="PF('empresaDialogWidgetVar').show()"/>
+	            
+				<span class="ui-separator">
+	                <span class="ui-icon ui-icon-grip-dotted-vertical" />
+	            </span>
+	            
+	            <p:commandButton title="Editar" icon="fa fa-edit" />
+	            
+	            <p:commandButton title="Excluir" icon="fa fa-trash" />
+	            
+				<span class="ui-separator">
+	                <span class="ui-icon ui-icon-grip-dotted-vertical" />
+	            </span>
+	            
+	            <p:commandButton title="Exportar para o Excel" icon="fa fa-file-excel-o" />			
+			</f:facet>
+		</p:toolbar>
+		
+		<p:spacer height="20px" />
+		
+		<p:dataTable value="#{gestaoEmpresasBean.listaEmpresas}"
+			var="empresa" emptyMessage="Nenhuma informação a ser exibida"
+			paginator="true" rows="10" paginatorPosition="bottom">
+			<p:column headerText="Razão social" sortBy="#{empresa.razaoSocial}">
+				<h:outputText value="#{empresa.razaoSocial}" />
+			</p:column>
+			
+			<p:column headerText="Nome fantasia">
+				<h:outputText value="#{empresa.nomeFantasia}" />
+			</p:column>
+			
+			<p:column headerText="Tipo empresa">
+				<h:outputText value="#{empresa.tipo}" />
+			</p:column>
+			
+			<p:column headerText="Ramo atividade">
+				<h:outputText value="#{empresa.ramoAtividade.descricao}" />
+			</p:column>
+		</p:dataTable>
+		
+		<p:dialog header="Nova empresa" widgetVar="empresaDialogWidgetVar"
+			modal="true" resizable="false" closeOnEscape="true">
+			<p:commandButton value="Teste!" />
+		</p:dialog>
+	</h:form>
+</ui:define>
+
+</ui:composition>
